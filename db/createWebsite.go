@@ -10,6 +10,7 @@ type Website struct {
 	IconURL string `json:"icon_url"`
 	Description string `json:"description"`
 	Tags []string `json:"tags"` 
+	Bumps int
 }
 
 func CreateWebsite(website Website, db gorm.DB) {
