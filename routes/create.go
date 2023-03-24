@@ -35,8 +35,15 @@ func Create (w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 
 		return errors.New("the id was already defined in the request body")
 	}
+	
+	if website.Bumps != 0 {
+		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
+
+		return errors.New("the id was already defined in the request body")
+	}
 
 	website.Id = uuid.NewString() 
+	website.Bumps = 0
 
 	neon.CreateWebsite(website, db)
 
