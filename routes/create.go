@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"time"
 
 	"context"
 
@@ -15,12 +16,12 @@ import (
 )
 
 type message struct {
-	name string	
-	id string
+	name string
+	id   string
 }
 
-func Create (w http.ResponseWriter, r *http.Request, db gorm.DB) error {
-	website := neon.Website{}	
+func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
+	website := neon.Website{}
 
 	err := ProcessBody(r.Body, &website)
 
@@ -35,24 +36,31 @@ func Create (w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 
 		return errors.New("the id was already defined in the request body")
 	}
-	
+
 	if website.Bumps != 0 {
 		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
 
 		return errors.New("the id was already defined in the request body")
 	}
 
-	website.Id = uuid.NewString() 
+	if website.Created != time.Now().Unix() {
+		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
+
+		return errors.New("the id was already defined in the request body")
+	}
+
+	website.Id = uuid.NewString()
 	website.Bumps = 0
+	website.Created = time.Now().Unix()
 
 	neon.CreateWebsite(website, db)
 
 	ctx := context.Background()
 
 	bus := events.Bus{
-		Channel: "new_website",
-		ClientId: uuid.NewString(),
-		Context: ctx,
+		Channel:       "new_website",
+		ClientId:      uuid.NewString(),
+		Context:       ctx,
 		TransportType: kubemq.TransportTypeGRPC,
 	}
 
@@ -66,7 +74,7 @@ func Create (w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 
 	message := message{
 		name: website.Name,
-		id: website.Id,
+		id:   website.Id,
 	}
 
 	stringified, err := json.Marshal(message)

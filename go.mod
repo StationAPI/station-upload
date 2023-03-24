@@ -6,6 +6,7 @@ require (
 	github.com/ferretcode-freelancing/fc-bus v0.1.0
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/google/uuid v1.3.0
+	github.com/kubemq-io/kubemq-go v1.7.7
 	gorm.io/driver/postgres v1.5.0
 	gorm.io/gorm v1.24.7-0.20230306060331-85eaf9eeda11
 )
@@ -21,7 +22,6 @@ require (
 	github.com/jackc/pgx/v5 v5.3.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
-	github.com/kubemq-io/kubemq-go v1.7.7 // indirect
 	github.com/kubemq-io/protobuf v1.3.1 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	go.opencensus.io v0.24.0 // indirect
