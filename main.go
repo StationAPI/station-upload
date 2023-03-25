@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"fmt"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -23,7 +24,11 @@ func main() {
 	r.Use(middleware.RealIP)
 
 	r.Post("/website/create", func(w http.ResponseWriter, r *http.Request) {
-		routes.Create(w, r, db)
+		err := routes.Create(w, r, db)
+
+		if err != nil {
+			fmt.Println(err)
+		}
 	})
 
 	http.ListenAndServe(":3000", r)

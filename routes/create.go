@@ -3,14 +3,13 @@ package routes
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
 	"time"
+	"os"
 
-	"context"
-
-	events "github.com/ferretcode-freelancing/fc-bus"
 	"github.com/google/uuid"
-	"github.com/kubemq-io/kubemq-go"
+	"github.com/memphisdev/memphis.go"
 	neon "github.com/stationapi/station-upload/db"
 	"gorm.io/gorm"
 )
@@ -37,13 +36,13 @@ func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 		return errors.New("the id was already defined in the request body")
 	}
 
-	if website.Bumps != 0 {
+	if website.Bumps > 0 {
 		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
 
 		return errors.New("the id was already defined in the request body")
 	}
 
-	if website.Created != time.Now().Unix() {
+	if website.Created > 0 {
 		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
 
 		return errors.New("the id was already defined in the request body")
@@ -53,24 +52,23 @@ func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 	website.Bumps = 0
 	website.Created = time.Now().Unix()
 
+	fmt.Println(website)
+
 	neon.CreateWebsite(website, db)
 
-	ctx := context.Background()
-
-	bus := events.Bus{
-		Channel:       "new_website",
-		ClientId:      uuid.NewString(),
-		Context:       ctx,
-		TransportType: kubemq.TransportTypeGRPC,
-	}
-
-	client, err := bus.Connect()
+	conn, err := memphis.Connect(
+		"memphis-rest-gateway.memphis.svc.cluster.local",
+		os.Getenv("USER"),
+		os.Getenv("TOKEN"),
+	) 
 
 	if err != nil {
 		http.Error(w, "there was an error creating the website", http.StatusInternalServerError)
 
 		return err
 	}
+
+	defer conn.Close()
 
 	message := message{
 		name: website.Name,
@@ -85,12 +83,11 @@ func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 		return err
 	}
 
-	_, sendErr := client.Send(ctx, kubemq.NewQueueMessage().
-		SetId(uuid.NewString()).
-		SetChannel("new_website").
-		SetBody(stringified))
+	producer, err := conn.CreateProducer("new_website", uuid.NewString())
 
-	if sendErr != nil {
+	err = producer.Produce(stringified, memphis.MsgHeaders(memphis.Headers{}))
+
+	if err != nil {
 		http.Error(w, "there was an error creating the website", http.StatusInternalServerError)
 
 		return err
