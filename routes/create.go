@@ -3,7 +3,6 @@ package routes
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 	"os"
@@ -11,6 +10,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/memphisdev/memphis.go"
 	neon "github.com/stationapi/station-upload/db"
+	"github.com/stationapi/station-upload/session"
 	"gorm.io/gorm"
 )
 
@@ -20,6 +20,22 @@ type message struct {
 }
 
 func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
+	cookie, cookieErr := r.Cookie("station")
+
+	if cookieErr != nil {
+		http.Error(w, "you are not authenticated", http.StatusForbidden)
+
+		return cookieErr
+	} 
+
+	githubId, authErr := session.GetSession(cookie.Value)
+
+	if authErr != nil {
+		http.Error(w, "you are not authenticated", http.StatusForbidden)
+
+		return authErr
+	}
+
 	website := neon.Website{}
 
 	err := ProcessBody(r.Body, &website)
@@ -39,20 +55,25 @@ func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 	if website.Bumps > 0 {
 		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
 
-		return errors.New("the id was already defined in the request body")
+		return errors.New("the bumps was already defined in the request body")
 	}
 
 	if website.Created > 0 {
 		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
 
-		return errors.New("the id was already defined in the request body")
+		return errors.New("the created field was already defined in the request body")
 	}
+
+	if website.Owner > 0 {
+		http.Error(w, "the owner field was already defined in the request body", http.StatusBadRequest)
+
+		return errors.New("the owner field was already defined in the request body")
+	} 
 
 	website.Id = uuid.NewString()
 	website.Bumps = 0
-	website.Created = time.Now().Unix()
-
-	fmt.Println(website)
+	website.Created = int(time.Now().Unix())
+	website.Owner = githubId
 
 	neon.CreateWebsite(website, db)
 

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -9,9 +10,10 @@ type Website struct {
 	Id          string   `json:"id"`
 	IconURL     string   `json:"icon_url"`
 	Description string   `json:"description"`
-	Tags        []string `json:"tags"`
-	Created     int64
-	Bumps       int
+	Tags        pq.StringArray `json:"tags" gorm:"type:text[]"`
+	Owner int `json:"owner"`
+	Created     int `json:"created"`
+	Bumps       int `json:"bumps"`
 }
 
 func CreateWebsite(website Website, db gorm.DB) {

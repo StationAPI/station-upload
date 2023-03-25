@@ -24,6 +24,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/kubemq-io/protobuf v1.3.1 // indirect
+	github.com/lib/pq v1.10.7 // indirect
 	github.com/memphisdev/memphis.go v0.2.1 // indirect
 	github.com/nats-io/nats.go v1.24.0 // indirect
 	github.com/nats-io/nkeys v0.4.4 // indirect

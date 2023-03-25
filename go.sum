@@ -79,6 +79,8 @@ github.com/kubemq-io/kubemq-go v1.7.7 h1:AloTHM7Cfw3w1vtMUf+wuSS67HTt00Y1JMQWvoU
 github.com/kubemq-io/kubemq-go v1.7.7/go.mod h1:5ZauXMijzvmQNZYiTMx1YC4kLPWDj4NkSSRkluGOI/k=
 github.com/kubemq-io/protobuf v1.3.1 h1:b4QcnpujV8U3go8pa2+FTESl6ygU6hY8APYibRtyemo=
 github.com/kubemq-io/protobuf v1.3.1/go.mod h1:mzbGBI05R+GhFLD520xweEIvDM+m4nI7ruJDhgEncas=
+github.com/lib/pq v1.10.7 h1:p7ZhMD+KsSRozJr34udlUrhboJwWAgCg34+/ZZNvZZw=
+github.com/lib/pq v1.10.7/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
 github.com/memphisdev/memphis.go v0.2.1 h1:FHY/ZVPXg2qAf2NP07yXz8RWGARzLrwKR3SwQsl2g+Q=
 github.com/memphisdev/memphis.go v0.2.1/go.mod h1:EdyV10nMnfFAt7x745y4LUtKuxpJcaOOOUlfQY5++RY=
 github.com/nats-io/nats.go v1.24.0 h1:CRiD8L5GOQu/DcfkmgBcTTIQORMwizF+rPk6T0RaHVQ=
