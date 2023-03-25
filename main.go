@@ -25,4 +25,6 @@ func main() {
 	r.Post("/website/create", func(w http.ResponseWriter, r *http.Request) {
 		routes.Create(w, r, db)
 	})
+
+	http.ListenAndServe(":3000", r)
 }
