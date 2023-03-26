@@ -13,6 +13,7 @@ type Website struct {
 	Tags        pq.StringArray `json:"tags" gorm:"type:text[]"`
 	Owner int `json:"owner"`
 	Created     int `json:"created"`
+  LastBumped  int `json:"last_bumped"`
 	Bumps       int `json:"bumps"`
 }
 

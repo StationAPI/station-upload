@@ -70,10 +70,17 @@ func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 		return errors.New("the owner field was already defined in the request body")
 	} 
 
+  if website.LastBumped > 0 {
+    http.Error(w, "the last_bumped field was already defined in the request body", http.StatusBadGateway)
+
+    return errors.New("the last_bumped field was already defined in the request body")
+  }
+
 	website.Id = uuid.NewString()
 	website.Bumps = 0
 	website.Created = int(time.Now().Unix())
 	website.Owner = githubId
+  website.LastBumped = 0
 
 	neon.CreateWebsite(website, db)
 
