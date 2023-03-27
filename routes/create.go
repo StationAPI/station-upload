@@ -2,9 +2,7 @@ package routes
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
-	"time"
 	"os"
 
 	"github.com/google/uuid"
@@ -46,42 +44,8 @@ func Create(w http.ResponseWriter, r *http.Request, db gorm.DB) error {
 		return err
 	}
 
-	if website.Id != "" {
-		http.Error(w, "the id was already defined in the request body", http.StatusBadRequest)
-
-		return errors.New("the id was already defined in the request body")
-	}
-
-	if website.Bumps > 0 {
-		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
-
-		return errors.New("the bumps was already defined in the request body")
-	}
-
-	if website.Created > 0 {
-		http.Error(w, "the bumps field was already defined in the request body", http.StatusBadRequest)
-
-		return errors.New("the created field was already defined in the request body")
-	}
-
-	if website.Owner > 0 {
-		http.Error(w, "the owner field was already defined in the request body", http.StatusBadRequest)
-
-		return errors.New("the owner field was already defined in the request body")
-	} 
-
-  if website.LastBumped > 0 {
-    http.Error(w, "the last_bumped field was already defined in the request body", http.StatusBadGateway)
-
-    return errors.New("the last_bumped field was already defined in the request body")
-  }
-
-	website.Id = uuid.NewString()
-	website.Bumps = 0
-	website.Created = int(time.Now().Unix())
-	website.Owner = githubId
-  website.LastBumped = 0
-
+  website.Owner = githubId
+	
 	neon.CreateWebsite(website, db)
 
 	conn, err := memphis.Connect(
